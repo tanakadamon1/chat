@@ -8,6 +8,8 @@ const io = socketIo(server);
 
 const PORT = 3000;
 
+let roomMessages = {}; // 各部屋のメッセージ履歴を保存
+
 app.use(express.static(__dirname + '/src'));
 
 app.get('/', (req, res) => {
@@ -19,12 +21,33 @@ server.listen(PORT, () => {
 });
 
 io.on('connection', (socket) => {
-  socket.on('sendMessage', (message) => {
-    const data = {
-        inputText: message.inputText,
-        inputName: message.inputName,
-        socketId: socket.id
+  console.log(`user connected: ${socket.id}`);
+
+  // 部屋に参加
+  socket.on('joinRoom', (roomName) => {
+    socket.join(roomName);
+
+    // 参加した部屋の履歴を送信
+    if (roomMessages[roomName]) {
+      socket.emit('previousMessages', roomMessages[roomName]);
     }
-    io.emit('receiveMessage', data);
+  });
+
+  // メッセージ受信
+  socket.on('sendMessage', ({ room, inputName, inputText }) => {
+    const data = {
+      inputName,
+      inputText,
+      socketId: socket.id
+    };
+
+    // 履歴に保存
+    if (!roomMessages[room]) {
+      roomMessages[room] = [];
+    }
+    roomMessages[room].push(data);
+
+    // 部屋内の全員に送信
+    io.to(room).emit('receiveMessage', data);
   });
 });

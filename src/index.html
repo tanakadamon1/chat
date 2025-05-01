@@ -9,6 +9,10 @@
 <body>
     <section class="wrapper">
         <h1>chat</h1>
+        <div class="roomList">
+            <button onclick="joinRoom('room1')">Room1</button>
+            <button onclick="joinRoom('room2')">Room2</button>
+        </div>
         <div class="inputBox">
             <div class="inputBoxList">
                 <input type="text" name="inputName" id="inputName" placeholder="名前">
@@ -16,6 +20,7 @@
             </div>
             <button id="sendBtn" class="sendBtn">送信</button>
         </div>
+        <h2 id="roomName"></h2>
         <ul id="chatList" class="chatList">
         
         </ul>
