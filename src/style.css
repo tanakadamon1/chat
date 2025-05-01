@@ -1,0 +1,94 @@
+*, ::before, ::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+}
+
+html {
+  font-size: 10px;
+}
+
+.wrapper {
+  max-width: 1000px;
+  margin: 100px auto;
+}
+
+h1 {
+  font-size: 5rem;
+  margin-bottom: 32px;
+}
+
+.inputBox {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.inputBoxList {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.inputBox input[type=text] {
+  width: 100%;
+  padding: 8px 8px;
+  border-radius: 8px;
+  border: 1px solid #000;
+}
+.inputBox .sendBtn {
+  width: 100px;
+  padding: 8px 8px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #000;
+  transition: 0.2s;
+}
+.inputBox .sendBtn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.chatList {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+}
+.chatList li {
+  font-size: 1.6rem;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  display: block;
+  max-width: 60%;
+  word-break: break-word;
+}
+.chatList li p {
+  font-size: 2rem;
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 4px;
+}
+.chatList li.me {
+  margin-left: auto;
+  text-align: right;
+}
+.chatList li.me p {
+  background: #7ee79a;
+  border: 1px solid #037228;
+}
+.chatList li.other {
+  margin-right: auto;
+  text-align: left;
+}
+.chatList li.other p {
+  background: #eee;
+  border: 1px solid #aaa;
+}/*# sourceMappingURL=style.css.map */
