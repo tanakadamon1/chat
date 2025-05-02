@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 const app = express();
 const server = http.Server(app);
@@ -8,34 +9,38 @@ const io = socketIo(server);
 
 const PORT = 3000;
 
-let roomMessages = {}; // 各部屋のメッセージ履歴を保存
+// 各部屋ごとのメッセージ履歴を保持するオブジェクト
+let roomMessages = {};
 
-app.use(express.static(__dirname + '/src'));
+app.use(express.static(path.join(__dirname, 'src')));
 
+// トップページにアクセスしたときの処理（URLクエリ対応）
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/src/index.html');
+  res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
+// サーバー起動
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
 
+// ソケット接続時の処理
 io.on('connection', (socket) => {
-  console.log(`user connected: ${socket.id}`);
+  console.log(`入室: ${socket.id}`);
 
-  // 部屋に参加
+  // クライアントが部屋に参加するとき
   socket.on('joinRoom', (roomName) => {
     socket.join(roomName);
+    console.log(`${socket.id} joined room ${roomName}`);
 
-    // 参加した部屋の履歴を送信
-    if (roomMessages[roomName]) {
-      socket.emit('previousMessages', roomMessages[roomName]);
-    }
+    // 過去のメッセージをクライアントに送信
+    const history = roomMessages[roomName] || [];
+    socket.emit('previousMessages', history);
   });
 
-  // メッセージ受信
+  // メッセージ送信処理
   socket.on('sendMessage', ({ room, inputName, inputText }) => {
-    const data = {
+    const messageData = {
       inputName,
       inputText,
       socketId: socket.id
@@ -45,9 +50,14 @@ io.on('connection', (socket) => {
     if (!roomMessages[room]) {
       roomMessages[room] = [];
     }
-    roomMessages[room].push(data);
+    roomMessages[room].push(messageData);
 
-    // 部屋内の全員に送信
-    io.to(room).emit('receiveMessage', data);
+    // 同じ部屋のクライアント全員にブロードキャスト
+    io.to(room).emit('receiveMessage', messageData);
+  });
+
+  // 切断処理（必要なら拡張）
+  socket.on('disconnect', () => {
+    console.log(`切断: ${socket.id}`);
   });
 });
